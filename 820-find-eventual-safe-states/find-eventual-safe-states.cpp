@@ -1,30 +1,43 @@
 class Solution {
 public:
-    bool dfs(int node, vector<vector<int>>& graph, vector<int>& vis) {
-        if (vis[node] != 0)
-            return vis[node] == 2;
+    vector<int> eventualSafeNodes(vector<vector<int>>& graph) {
 
-        vis[node] = 1;
+        int n = graph.size();
+        vector<vector<int>> rev(n);
+        vector<int> indegree(n, 0);
 
-        for (int nei : graph[node]) {
-            if (!dfs(nei, graph, vis))
-                return false;
+        for (int u = 0; u < n; u++) {
+            for (int v : graph[u]) {
+                rev[v].push_back(u);  
+                indegree[u]++;        
+            }
         }
 
-        vis[node] = 2;
-        return true;
-    }
-
-    vector<int> eventualSafeNodes(vector<vector<int>>& graph) {
-        int n = graph.size();
-        vector<int> vis(n, 0);
-        vector<int> ans;
+        queue<int> q;
 
         for (int i = 0; i < n; i++) {
-            if (dfs(i, graph, vis))
-                ans.push_back(i);
+            if (indegree[i] == 0) {
+                q.push(i);
+            }
         }
 
-        return ans;
+        vector<int> safe;
+
+        while (!q.empty()) {
+            int node = q.front();
+            q.pop();
+
+            safe.push_back(node);
+
+            for (int prev : rev[node]) {
+                indegree[prev]--;
+                if (indegree[prev] == 0) {
+                    q.push(prev);
+                }
+            }
+        }
+
+        sort(safe.begin(), safe.end());
+        return safe;
     }
 };
