@@ -26,8 +26,7 @@ public:
             auto [x, y] = coord;
             pq.pop();
 
-            if (x == n - 1 && y == n - 1)
-                return dist;
+            
 
             for (int i = 0; i < 8; i++) {
                 int r = x + dr[i];
@@ -42,6 +41,6 @@ public:
             }
         }
 
-        return -1;
+        return distance[n-1][n-1] == INT_MAX ? -1:distance[n-1][n-1];
     }
 };
