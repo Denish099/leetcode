@@ -4,7 +4,7 @@ public:
         int ans = 0;
 
         for(auto ch : n){
-            ans = max(ans,ch - 48);
+            ans = max(ans,ch - '0');
 
             
         }
