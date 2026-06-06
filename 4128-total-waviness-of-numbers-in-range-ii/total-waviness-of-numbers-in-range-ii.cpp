@@ -1,78 +1,79 @@
 class Solution {
-   
-    pair<long long, long long> memo[20][11][11];
-
-    pair<long long, long long> dfs(int idx, int prev_digit, int last_digit, bool is_limit, const string& s) {
-       
-        if (idx == s.size()) {
-            return {1, 0}; 
-        }
-
-        if (!is_limit && memo[idx][prev_digit][last_digit].first != -1) {
-            return memo[idx][prev_digit][last_digit];
-        }
-
-        long long count = 0;
-        long long waviness = 0;
-        
-        int upper = is_limit ? s[idx] - '0' : 9;
-
-        for (int d = 0; d <= upper; d++) {
-            int next_prev, next_last;
-            
-            if (last_digit == 10) { 
-                if (d == 0) {
-                    next_prev = 10;
-                    next_last = 10;
-                } else {
-                    next_prev = 10;
-                    next_last = d;
-                }
-            } else {
-                next_prev = last_digit;
-                next_last = d;
-            }
-
-            auto res = dfs(idx + 1, next_prev, next_last, is_limit && (d == upper), s);
-            
-            count += res.first;
-            waviness += res.second;
-
-            if (last_digit != 10 && prev_digit != 10) {
-                bool is_peak = (last_digit > prev_digit && last_digit > d);
-                bool is_valley = (last_digit < prev_digit && last_digit < d);
-                
-                if (is_peak || is_valley) {
-                   
-                    waviness += res.first;
-                }
-            }
-        }
-
-        if (!is_limit) {
-            memo[idx][prev_digit][last_digit] = {count, waviness};
-        }
-
-        return {count, waviness};
-    }
-
-    long long solve(long long num) {
-        if (num < 0) return 0;
-        string s = to_string(num);
-        
-        for (int i = 0; i < 20; i++) {
-            for (int j = 0; j < 11; j++) {
-                for (int k = 0; k < 11; k++) {
-                    memo[i][j][k] = {-1, -1};
-                }
-            }
-        }
-        
-        return dfs(0, 10, 10, true, s).second;
-    }
-
 public:
+    typedef long long ll;
+    string s;
+    int n;
+
+    // Increased size to 20 to safely handle long long limits (up to 19 digits)
+    ll dpTotalNumbers[20][10][10];
+    ll dptotalWaviness[20][10][10];
+
+    pair<ll, ll> solve(int curr, int pprev, int prev, bool tight, bool ldz) {
+        if (curr == n) {
+            return {1, 0};
+        }
+
+        // Use remaining length for the DP state to prevent leakage between func() calls
+        int rem = n - curr;
+
+        if (!tight && !ldz && prev != -1 && pprev != -1) {
+            if (dpTotalNumbers[rem][pprev][prev] != -1) {
+                return {dpTotalNumbers[rem][pprev][prev],
+                        dptotalWaviness[rem][pprev][prev]};
+            }
+        }
+        
+        ll totalNumber = 0;
+        ll totalWaviness = 0;
+
+        int ub = tight ? (s[curr] - '0') : 9;
+
+        for (int dig = 0; dig <= ub; dig++) {
+
+            bool newTight = (tight && dig == ub);
+            bool newLdz = (ldz && dig == 0);
+
+            int newPrev = newLdz ? -1 : dig;
+            int newPrevPrev = newLdz ? -1 : prev;
+
+            auto [cnt, wav] =
+                solve(curr + 1, newPrevPrev, newPrev, newTight, newLdz);
+
+            if (!ldz && pprev != -1 && prev != -1) {
+                bool isPeak = (pprev < prev && prev > dig);
+                bool isValley = (pprev > prev && prev < dig);
+
+                if (isPeak || isValley) {
+                    totalWaviness += cnt;
+                }
+            }
+
+            totalNumber += cnt;
+            totalWaviness += wav;
+        }
+        
+        if (!tight && !ldz && prev != -1 && pprev != -1) {
+            dpTotalNumbers[rem][pprev][prev] = totalNumber;
+            dptotalWaviness[rem][pprev][prev] = totalWaviness;
+        }
+
+        return {totalNumber, totalWaviness};
+    }
+
+    ll func(ll num) {
+        if (num < 100)
+            return 0;
+
+        s = to_string(num);
+        n = s.size();
+
+        return solve(0, -1, -1, true, true).second;
+    }
+
     long long totalWaviness(long long num1, long long num2) {
-        return solve(num2) - solve(num1 - 1);
+        memset(dpTotalNumbers, -1, sizeof(dpTotalNumbers));
+        memset(dptotalWaviness, 0, sizeof(dptotalWaviness)); 
+        
+        return func(num2) - func(num1 - 1);
     }
 };
