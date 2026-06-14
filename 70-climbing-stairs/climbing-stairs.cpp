@@ -1,22 +1,25 @@
 class Solution {
 public:
     vector<int> dp;
-    int helper(int n) {
-        if (n == 0) {
-            return 1;
-        }
-        if(n < 0){
+
+    int helper(int i, int n) {
+        if (i > n) {
             return 0;
         }
 
-        if(dp[n] != -1){
-            return dp[n];
+        if (i == n) {
+            return 1;
         }
 
-        return dp[n] = helper(n-1) + helper(n-2);
+        if (dp[i] != -1) {
+            return dp[i];
+        }
+
+        return dp[i] = helper(i + 1, n) + helper(i + 2, n);
     }
+
     int climbStairs(int n) {
-        dp.resize(n+1,-1);
-        return helper(n);
+        dp.resize(n + 1, -1);
+        return helper(0, n);
     }
 };
