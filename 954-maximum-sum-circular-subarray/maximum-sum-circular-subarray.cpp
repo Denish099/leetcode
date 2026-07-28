@@ -1,26 +1,21 @@
 class Solution {
 public:
-    int maxSubarraySumCircular(std::vector<int>& nums) {
-        int total_sum = 0;
-        
-        int curr_max = 0, max_sum = nums[0];
-        int curr_min = 0, min_sum = nums[0];
-        
-        for (int num : nums) {
-            curr_max = max(num, curr_max + num);
-            max_sum = max(max_sum, curr_max);
-            
-            curr_min = min(num, curr_min + num);
-            min_sum = min(min_sum, curr_min);
-            
-            total_sum += num;
+    int maxSubarraySumCircular(vector<int>& A) {
+        int total_sum = 0, curr_sum1 = 0, curr_sum2 = 0, mxsum_subary = INT_MIN,
+            minsum_subary = INT_MAX;
+        for (auto i : A) {
+            total_sum += i;
+            curr_sum1 += i;
+            curr_sum2 += i;
+            mxsum_subary = max(mxsum_subary, curr_sum1);
+            if (curr_sum1 < 0)
+                curr_sum1 = 0;
+            minsum_subary = min(curr_sum2, minsum_subary);
+            if (curr_sum2 > 0)
+                curr_sum2 = 0;
         }
-        
-       
-        if (max_sum < 0) {
-            return max_sum;
-        }
-        
-        return max(max_sum, total_sum - min_sum);
+        return (total_sum == minsum_subary)
+                   ? mxsum_subary
+                   : max(mxsum_subary, total_sum - minsum_subary);
     }
 };
