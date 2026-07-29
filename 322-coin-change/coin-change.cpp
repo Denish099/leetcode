@@ -1,20 +1,35 @@
 class Solution {
 public:
-    int coinChange(vector<int>& coins, int amount) {
-        
-        vector<int> dp(amount + 1, amount + 1);
-        
-        
-        dp[0] = 0;
-        
-        for (int i = 1; i <= amount; i++) {
-            for (int coin : coins) {
-                if (i - coin >= 0) {
-                    dp[i] = min(dp[i], 1 + dp[i - coin]);
-                }
-            }
+    vector<vector<int>> dp;
+    int helper(vector<int>& coins, int amount, int idx) {
+        if (amount < 0) {
+            return 1e9;
         }
-        
-        return dp[amount] > amount ? -1 : dp[amount];
+        if (amount == 0) {
+            return 0;
+        }
+
+        int count = INT_MAX;
+        if (idx >= coins.size()) {
+            return 1e9;
+        }
+        if (dp[amount][idx] != -1) {
+            return dp[amount][idx];
+        }
+
+        count = min(helper(coins, amount, idx + 1),
+                    1 + helper(coins, amount - coins[idx], idx));
+
+        return dp[amount][idx] = count;
+    }
+    int coinChange(vector<int>& coins, int amount) {
+        if (amount == 0) {
+            return 0;
+        }
+        dp.resize(amount + 1, vector<int>(coins.size() + 1,-1));
+
+        int ans = helper(coins, amount, 0);
+
+        return ans == 1e9 ? -1 : ans;
     }
 };
