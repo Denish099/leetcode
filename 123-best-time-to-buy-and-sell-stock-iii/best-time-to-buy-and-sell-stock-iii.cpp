@@ -20,19 +20,15 @@ public:
             int profit = 0;
 
             if (buy) {
-                // Buy
                 int take = self(self, day + 1, false, k) - prices[day];
 
-                // Don't buy
                 int notTake = self(self, day + 1, true, k);
 
                 profit = max(take, notTake);
             }
             else {
-                // Sell -> transaction completed
                 int sell = prices[day] + self(self, day + 1, true, k + 1);
 
-                // Don't sell
                 int notSell = self(self, day + 1, false, k);
 
                 profit = max(sell, notSell);
