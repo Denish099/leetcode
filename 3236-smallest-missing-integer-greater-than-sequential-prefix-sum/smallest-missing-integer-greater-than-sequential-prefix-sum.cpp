@@ -5,9 +5,9 @@ public:
         set<int> st(nums.begin(), nums.end());
 
         int pref = 0;
-        int i = 0;
+        
 
-        int j = i + 1;
+        int j =  1;
 
         while (j < n && nums[j] - 1 == nums[j - 1]) {
             pref += nums[j - 1];
