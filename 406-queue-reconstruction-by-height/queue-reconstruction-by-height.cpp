@@ -9,6 +9,10 @@ public:
             return a[1] < b[1];
         });
 
+        for(auto p:people){
+            cout<< p[0] << " "<< p[1]<<endl;
+        }
+
         vector<vector<int>> ans;
 
         for (auto p : people) {
