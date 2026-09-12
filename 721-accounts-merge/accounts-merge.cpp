@@ -1,6 +1,5 @@
 class Solution {
 public:
-
     struct DSU {
 
         vector<int> parent;
@@ -44,19 +43,13 @@ public:
         }
     };
 
-
-    vector<vector<string>> accountsMerge(
-        vector<vector<string>>& accounts
-    ) {
+    vector<vector<string>> accountsMerge(vector<vector<string>>& accounts) {
 
         int n = accounts.size();
 
         DSU dsu(n);
 
         unordered_map<string, int> mp;
-
-
-
 
         for (int i = 0; i < n; i++) {
 
@@ -66,20 +59,14 @@ public:
 
                 if (mp.find(mail) == mp.end()) {
 
-   
                     mp[mail] = i;
 
-                }
-                else {
-
+                } else {
 
                     dsu.unite(i, mp[mail]);
                 }
             }
         }
-
-
-
 
         unordered_map<int, vector<string>> groups;
 
@@ -90,8 +77,6 @@ public:
             groups[root].push_back(mail);
         }
 
-
-
         vector<vector<string>> ans;
 
         for (auto& [root, mails] : groups) {
@@ -100,10 +85,8 @@ public:
 
             vector<string> temp;
 
-       
             temp.push_back(accounts[root][0]);
 
-     
             for (string& mail : mails) {
                 temp.push_back(mail);
             }
